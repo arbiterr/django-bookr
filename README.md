@@ -1,4 +1,4 @@
-# Django Book Ratings - Bookr
+# Django-Bookr
 
 This project allows users to track and rate the books they've read.
 
@@ -24,4 +24,4 @@ This project allows users to track and rate the books they've read.
 * [ ] The dashboard displays the top 5 highest rated books
 * [ ] The dashboard displays the top 5 most read books
 * [ ] The dashboard displays the 5 books added most recently
-* [ ] Both visitors and authenticated users can view the dashboard
+* [x] Both visitors and authenticated users can view the dashboard
