@@ -17,7 +17,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []  # TODO: set the host
+ALLOWED_HOSTS = ['django-bookr.herokuapp.com/']
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
