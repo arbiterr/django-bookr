@@ -1,5 +1,26 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<p>Welcome!</p>
+<h2>Dashboard</h2>
+
+<h3>Highest rated books</h3>
+{% for book in top_books %}
+<div>{{ book }}</div>
+{% empty %}
+<p>No books rated yet.</p>
+{% endfor %}
+
+<h3>Most read books</h3>
+{% for book in most_read_books %}
+<div>{{ book }}</div>
+{% empty %}
+<p>No books read yet.</p>
+{% endfor %}
+
+<h3>Recently added books</h3>
+{% for book in recent_books %}
+<div>{{ book }}</div>
+{% empty %}
+<p>No books added yet.</p>
+{% endfor %}
 {% endblock %}
