@@ -21,7 +21,7 @@
                 <li><a href="#">My Books</a></li>
                 <li><a href="{% url 'logout' %}">Log Out</a></li>
                 {% else %}
-                <li><a href="#">Sign Up</a></li>
+                <li><a href="{% url 'django_registration_register' %}">Sign Up</a></li>
                 <li><a href="{% url 'login' %}">Log In</a></li>
                 {% endif %}
             </ul>

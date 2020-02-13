@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load material_form %}
+
+{% block title %}
+Sign up
+{% endblock %}
+
+{% block content %}
+
+<h2>Sign up</h2>
+
+
+<form method="post">
+{% csrf_token %}
+{% form form=form %}{% endform %}
+
+<button type="submit" name="_submit" class="btn">Submit</button>
+</form>
+
+<p><a href="{% url 'login' %}">Already have an account?</a></p>
+
+{% endblock %}
