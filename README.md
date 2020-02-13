@@ -7,7 +7,7 @@ This project allows users to track and rate the books they've read.
 ### Account management
 
 * [ ] Users can create an account
-* [ ] Users can log in
+* [x] Users can log in
 * [ ] Users can reset their password
 
 ### Book list

@@ -16,8 +16,14 @@
                 <strong>Bookr</strong>
             </a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
+                {% if user.is_authenticated %}
+                <li>Welcome back, {{ user.username }}!</li>
+                <li><a href="#">My Books</a></li>
+                <li><a href="{% url 'logout' %}">Log Out</a></li>
+                {% else %}
                 <li><a href="#">Sign Up</a></li>
-                <li><a href="#">Log In</a></li>
+                <li><a href="{% url 'login' %}">Log In</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>
