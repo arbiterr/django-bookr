@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookr | {% block title %}{% endblock %}</title>
+    {% include 'material/includes/material_css.html' %}
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+
+    <nav class="deep-purple">
+        <div class="nav-wrapper container">
+            <a href="#" class="brand-logo">
+                <i class="material-icons">library_books</i>
+                <strong>Bookr</strong>
+            </a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                {% if user.is_authenticated %}
+                <li>Welcome back, {{ user.username }}!</li>
+                <li><a href="#">My Books</a></li>
+                <li>
+                    <a class="dropdown-trigger" href="#!" data-target="settings-dropdown"><i class="material-icons">settings</i></a>
+                    {# setting dropdown #}
+                    <ul id="settings-dropdown" class="dropdown-content">
+                        <li><a href="{% url 'password_change' %}">Change password</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li><a href="{% url 'django_registration_register' %}">Sign Up</a></li>
+                <li><a href="{% url 'login' %}">Log In</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <main>
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    <script
+        src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+        crossorigin="anonymous"></script>
+    {% include 'material/includes/material_js.html' %}
+    <script>
+        $( document ).ready(function() {
+            $(".dropdown-trigger").dropdown();
+        });
+
+    </script>
+</body>
+</html>
