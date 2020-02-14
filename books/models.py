@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -19,3 +20,28 @@ class Book(models.Model):
 
     def __str__(self) -> str:
         return f'{self.author}: {self.title}'
+
+
+class BookList(models.Model):
+    RATING_CHOICES = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=RATING_CHOICES, null=True, blank=True)
+    override_title = models.CharField(max_length=50, blank=True)
+    override_author = models.CharField(max_length=50, blank=True)
+    override_year = models.IntegerField(
+        'override year of first publication', null=True, blank=True)
+    added = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f'{self.user.username} lists {self.book}'

@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Author, Book
+from .models import Author, Book, BookList
 
 
 class DashboardViewEmptyDBTests(TestCase):
@@ -67,3 +68,19 @@ class BookModelTests(TestCase):
             first_published=1951
         )
         self.assertEqual(str(book), "Salinger, J. D.: The Catcher in the Rye")
+
+
+class BookListModelTests(TestCase):
+
+    fixtures = ['fewusers.json', 'threebooks.json']
+
+    def test_string_representation(self):
+        user = User.objects.get(pk=2)
+        book = Book.objects.get(pk=1)
+        book_listed = BookList(user=user, book=book)
+        self.assertEqual(
+            str(book_listed),
+            "joe lists Salinger, J. D.: The Catcher in the Rye")
+
+
+# class MyBookViewTests(TestCase):
