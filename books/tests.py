@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
+from .forms import BookListAddForm
 from .models import Author, Book, BookList
 
 
@@ -126,3 +127,83 @@ class BookListViewTests(TestCase):
         self.assertContains(response, 'The Catcher in the Rye')
         self.assertContains(response, 'Nine stories')
         self.assertContains(response, 'Franny and Zooey')
+
+
+class BookListAddFormTest(TestCase):
+
+    fixtures = ['fewusers.json', 'threebooks.json']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=2)
+        self.book = Book.objects.get(pk=1)
+
+    def test_valid_data(self):
+        form = BookListAddForm({"book": self.book}, user=self.user)
+        self.assertTrue(form.is_valid())
+        book_added = form.save()
+        self.assertEqual(book_added.user.username, "joe")
+        self.assertEqual(book_added.book.title, "The Catcher in the Rye")
+
+    def test_init_without_user(self):
+        with self.assertRaises(KeyError):
+            BookListAddForm()
+
+    def test_blank_data(self):
+        form = BookListAddForm({}, user=self.user)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors, {
+            'book': ['This field is required.'],
+        })
+
+    def test_book_field(self):
+        form = BookListAddForm(user=self.user)
+        # book field length should = number of all books + empty value
+        self.assertEqual(len(form["book"]), 4)
+
+    def test_existing_books_exluded(self):
+        '''
+        Books already on the user's list shouldn't be included
+        in the book field
+        '''
+        BookList.objects.create(
+            book=self.book,
+            user=self.user
+        )
+        form = BookListAddForm(user=self.user)
+        # book field length should =
+        # number of all books + empty value - 1 book already in the list
+        self.assertEqual(len(form["book"]), 3)
+        self.assertNotIn(self.book, form["book"].field.queryset)
+
+
+class BookListAddViewTests(TestCase):
+
+    fixtures = ['fewusers.json', 'threebooks.json']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=2)
+
+    def test_url_logged_out(self):
+        response = self.client.get('/my/books/add/')
+        self.assertRedirects(
+            response,
+            f"{reverse('login')}?next=/my/books/add/")
+
+    def test_url_logged_in(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/my/books/add/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_template_used(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('books:book_list_add'))
+        self.assertTemplateUsed(
+            response, template_name='books/book_list_add.html')
+
+    def test_redirect(self):
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse('books:book_list_add'),
+            {'book': Book.objects.get(pk=1).pk}
+        )
+        self.assertRedirects(response, reverse('books:book_list'))

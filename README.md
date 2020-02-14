@@ -12,12 +12,12 @@ This project allows users to track and rate the books they've read.
 
 ### Book list
 
-* [ ] Users can view their own list of books
+* [x] Users can view their own list of books
 * [ ] Users can add books to their list
 * [ ] Users can update the books on their list
 * [ ] Users can remove books from their list
 * [ ] Users can rate their books on a scale of 1 to 5
-* [ ] A list of books can only be viewed by its owner
+* [x] A list of books can only be viewed by its owner
 
 ### Dashboard
 

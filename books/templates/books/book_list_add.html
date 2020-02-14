@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load material_form %}
+
+{% block title %}My books{% endblock %}
+
+
+{% block content %}
+<h2>Add a new book to your list</h2>
+
+<p>Select a book from our database:</p>
+
+<form method="post" action="">
+    {% csrf_token %}
+    {% form form=form %}{% endform %}
+
+    <button type="submit" name="_submit" class="btn">
+        <i class="material-icons left">library_add</i>
+        Add book
+    </button>
+</form>
+
+<p>Can't find a book? <a href="#">Create it here!</a></p>
+
+{% endblock %}

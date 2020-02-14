@@ -3,7 +3,10 @@
 {% block content %}
 <h2>My books</h2>
 
-<a class="waves-effect waves-light btn-large"><i class="material-icons left">library_add</i>Add a book to your list</a>
+<a class="waves-effect waves-light btn-large" href="{% url 'books:book_list_add' %}">
+    <i class="material-icons left">library_add</i>
+    Add a book to your list
+</a>
 
 {% for book_listed in mybooks %}
 <div>{{ book_listed.book }}</div>
