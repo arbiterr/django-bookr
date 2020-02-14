@@ -19,7 +19,7 @@
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 {% if user.is_authenticated %}
                 <li>Welcome back, {{ user.username }}!</li>
-                <li><a href="#">My Books</a></li>
+                <li><a href="{% url 'books:book_list' %}">My Books</a></li>
                 <li>
                     <a class="dropdown-trigger" href="#!" data-target="settings-dropdown"><i class="material-icons">settings</i></a>
                     {# setting dropdown #}

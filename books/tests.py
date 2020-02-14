@@ -83,4 +83,46 @@ class BookListModelTests(TestCase):
             "joe lists Salinger, J. D.: The Catcher in the Rye")
 
 
-# class MyBookViewTests(TestCase):
+class BookListViewTests(TestCase):
+
+    fixtures = ['fewusers.json', 'threebooks.json']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=2)
+
+    def test_url_logged_out(self):
+        response = self.client.get('/my/books/')
+        self.assertRedirects(
+            response,
+            f"{reverse('login')}?next=/my/books/")
+
+    def test_url_logged_in(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/my/books/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_template_used(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('books:book_list'))
+        self.assertTemplateUsed(response, template_name='books/book_list.html')
+
+    def test_empty_list(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('books:book_list'))
+        self.assertContains(response, 'No books on your list yet.')
+
+    def test_one_book_on_the_list(self):
+        book = Book.objects.get(pk=1)
+        BookList.objects.create(user=self.user, book=book)
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('books:book_list'))
+        self.assertContains(response, 'The Catcher in the Rye')
+
+    def test_three_books_on_the_list(self):
+        for book in Book.objects.all():
+            BookList.objects.create(user=self.user, book=book)
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('books:book_list'))
+        self.assertContains(response, 'The Catcher in the Rye')
+        self.assertContains(response, 'Nine stories')
+        self.assertContains(response, 'Franny and Zooey')
