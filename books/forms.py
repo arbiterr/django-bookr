@@ -21,3 +21,11 @@ class BookListAddForm(forms.ModelForm):
         book.user = self.user
         book.save()
         return book
+
+
+class SearchResultsForm(forms.Form):
+    book = forms.ChoiceField(widget=forms.RadioSelect)
+
+    def __init__(self, book_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['book'].choices = book_choices

@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from .forms import BookListAddForm
 from .models import Author, Book, BookList
+from .views import create_book_choices
 
 
 class DashboardViewEmptyDBTests(TestCase):
@@ -58,17 +59,41 @@ class AuthorModelTests(TestCase):
 
 class BookModelTests(TestCase):
 
+    fixtures = ['fewusers.json', 'threebooks.json']
+
     def setUp(self):
-        self.author = Author.objects.create(
-            first_name="J. D.", last_name="Salinger")
+        self.book = Book.objects.get(pk=1)
+        self.user = User.objects.get(pk=2)
 
     def test_string_representation(self):
-        book = Book(
-            author=self.author,
-            title="The Catcher in the Rye",
-            first_published=1951
+        self.assertEqual(
+            str(self.book),
+            "Salinger, J. D.: The Catcher in the Rye"
         )
-        self.assertEqual(str(book), "Salinger, J. D.: The Catcher in the Rye")
+
+    def test_add_to_booklist_method_with_valid_data(self):
+        bl_item, created = self.book.add_to_booklist(self.user)
+        self.assertTrue(created)
+        self.assertEqual(bl_item.book, self.book)
+        self.assertEqual(bl_item.user, self.user)
+        self.assertEqual(
+            1,
+            BookList.objects.filter(user=self.user, book=self.book).count()
+        )
+
+    def test_add_to_booklist_method_without_user(self):
+        with self.assertRaises(TypeError):
+            self.book.add_to_booklist()
+
+    def test_add_to_booklist_method_with_duplicate(self):
+        '''Test if the book is already on the user's booklist'''
+        BookList.objects.create(user=self.user, book=self.book)
+        bl_item, created = self.book.add_to_booklist(self.user)
+        self.assertFalse(created)
+        self.assertEqual(
+            1,
+            BookList.objects.filter(user=self.user, book=self.book).count()
+        )
 
 
 class BookListModelTests(TestCase):
@@ -165,10 +190,7 @@ class BookListAddFormTest(TestCase):
         Books already on the user's list shouldn't be included
         in the book field
         '''
-        BookList.objects.create(
-            book=self.book,
-            user=self.user
-        )
+        BookList.objects.create(book=self.book, user=self.user)
         form = BookListAddForm(user=self.user)
         # book field length should =
         # number of all books + empty value - 1 book already in the list
@@ -204,6 +226,62 @@ class BookListAddViewTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.post(
             reverse('books:book_list_add'),
-            {'book': Book.objects.get(pk=1).pk}
+            {'book': 1}  # book with pk=1
         )
         self.assertRedirects(response, reverse('books:book_list'))
+
+
+class BookSearchViewTests(TestCase):
+
+    fixtures = ['fewusers.json', 'threebooks.json']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=2)
+
+    def test_url_logged_out(self):
+        response = self.client.get('/my/books/search/')
+        self.assertRedirects(
+            response,
+            f"{reverse('login')}?next=/my/books/search/")
+
+    def test_url_logged_in(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/my/books/search/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_template_used(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('books:book_search'))
+        self.assertTemplateUsed(
+            response, template_name='books/book_search.html')
+
+    def test_create_book_choices_helper_function(self):
+        results = [
+            {
+                "cover_edition_key": "OL18",
+                "edition_key": ["OL11", "OL18"],
+                "author_name": ["Author 1", "Coauthor"],
+                "title": "Title 1",
+                "first_publish_year": 1968
+            },
+            {
+                "cover_edition_key": "OL71",
+                "author_name": ["Author 2", ],
+                "title": "Title 2",
+                "first_publish_year": 2012
+            },
+            # this one should be excluded
+            {
+                "author_name": ["Author 2", ],
+                "title": "Title 2",
+                "first_publish_year": 2012
+            },
+        ]
+        choices = create_book_choices(results)
+        self.assertEqual(
+            choices,
+            (
+                ("OL18", "Author 1: Title 1 (1968)"),
+                ("OL71", "Author 2: Title 2 (2012)")
+            )
+        )

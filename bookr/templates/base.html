@@ -12,7 +12,7 @@
 
     <nav class="deep-purple">
         <div class="nav-wrapper container">
-            <a href="#" class="brand-logo">
+            <a href="{% url 'books:dashboard' %}" class="brand-logo">
                 <i class="material-icons">library_books</i>
                 <strong>Bookr</strong>
             </a>
@@ -49,6 +49,7 @@
     <script>
         $( document ).ready(function() {
             $(".dropdown-trigger").dropdown();
+            {% block extra_js_inline %}{% endblock %}
         });
 
     </script>

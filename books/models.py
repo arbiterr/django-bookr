@@ -6,7 +6,7 @@ class Author(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'{self.last_name}, {self.first_name}'
 
 
@@ -18,8 +18,11 @@ class Book(models.Model):
         'originally added to the database', auto_now_add=True)
     cover = models.URLField(max_length=100, blank=True)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'{self.author}: {self.title}'
+
+    def add_to_booklist(self, user):
+        return self.booklist_set.get_or_create(user=user)
 
 
 class BookList(models.Model):
@@ -43,5 +46,5 @@ class BookList(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'{self.user.username} lists {self.book}'
