@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.urls import reverse
 
@@ -52,9 +53,17 @@ class DashboardViewSmallDBTests(TestCase):
 
 class AuthorModelTests(TestCase):
 
+    def setUp(self):
+        self.author = Author.objects.create(
+            first_name="J. D.", last_name="Salinger")
+
     def test_string_representation(self):
-        author = Author(first_name="J. D.", last_name="Salinger")
-        self.assertEqual(str(author), "J. D. Salinger")
+        self.assertEqual(str(self.author), "J. D. Salinger")
+
+    def test_duplicates(self):
+        with self.assertRaises(IntegrityError):
+            Author.objects.create(
+                first_name="J. D.", last_name="Salinger")
 
 
 class BookModelTests(TestCase):
@@ -70,6 +79,14 @@ class BookModelTests(TestCase):
             str(self.book),
             "J. D. Salinger: The Catcher in the Rye"
         )
+
+    def test_duplicates(self):
+        author = Author.objects.get(pk=1)
+        with self.assertRaises(IntegrityError):
+            Book.objects.create(
+                author=author, title="The Catcher in the Rye",
+                first_published=1951
+            )
 
     def test_add_to_booklist_method_with_valid_data(self):
         bl_item, created = self.book.add_to_booklist(self.user)
@@ -100,13 +117,20 @@ class BookListModelTests(TestCase):
 
     fixtures = ['fewusers.json', 'threebooks.json']
 
+    def setUp(self):
+        self.user = User.objects.get(pk=2)
+        self.book = Book.objects.get(pk=1)
+
     def test_string_representation(self):
-        user = User.objects.get(pk=2)
-        book = Book.objects.get(pk=1)
-        book_listed = BookList(user=user, book=book)
+        book_listed = BookList(user=self.user, book=self.book)
         self.assertEqual(
             str(book_listed),
             "joe lists J. D. Salinger: The Catcher in the Rye")
+
+    def test_duplicates(self):
+        BookList.objects.create(user=self.user, book=self.book)
+        with self.assertRaises(IntegrityError):
+            BookList.objects.create(user=self.user, book=self.book)
 
 
 class BookListViewTests(TestCase):

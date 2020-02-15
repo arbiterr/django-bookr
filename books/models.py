@@ -6,6 +6,12 @@ class Author(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['first_name', 'last_name'], name='unique_author')
+        ]
+
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
@@ -17,6 +23,13 @@ class Book(models.Model):
     added = models.DateTimeField(
         'originally added to the database', auto_now_add=True)
     cover = models.URLField(max_length=100, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title', 'first_published'],
+                name='unique_book')
+        ]
 
     def __str__(self):
         return f'{self.author}: {self.title}'
@@ -45,6 +58,12 @@ class BookList(models.Model):
         'override year of first publication', null=True, blank=True)
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'book'], name='unique_booklist')
+        ]
 
     def __str__(self):
         return f'{self.user.username} lists {self.book}'
