@@ -54,7 +54,7 @@ class AuthorModelTests(TestCase):
 
     def test_string_representation(self):
         author = Author(first_name="J. D.", last_name="Salinger")
-        self.assertEqual(str(author), "Salinger, J. D.")
+        self.assertEqual(str(author), "J. D. Salinger")
 
 
 class BookModelTests(TestCase):
@@ -68,7 +68,7 @@ class BookModelTests(TestCase):
     def test_string_representation(self):
         self.assertEqual(
             str(self.book),
-            "Salinger, J. D.: The Catcher in the Rye"
+            "J. D. Salinger: The Catcher in the Rye"
         )
 
     def test_add_to_booklist_method_with_valid_data(self):
@@ -106,7 +106,7 @@ class BookListModelTests(TestCase):
         book_listed = BookList(user=user, book=book)
         self.assertEqual(
             str(book_listed),
-            "joe lists Salinger, J. D.: The Catcher in the Rye")
+            "joe lists J. D. Salinger: The Catcher in the Rye")
 
 
 class BookListViewTests(TestCase):
