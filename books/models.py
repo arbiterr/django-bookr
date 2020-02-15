@@ -37,6 +37,12 @@ class Book(models.Model):
     def add_to_booklist(self, user):
         return self.booklist_set.get_or_create(user=user)
 
+    @property
+    def number_of_listings(self):
+        '''Calculates how many times was a book listed by users'''
+        self._number_of_listings = self.booklist_set.count()
+        return self._number_of_listings
+
 
 class BookList(models.Model):
     RATING_CHOICES = (

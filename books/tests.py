@@ -112,6 +112,22 @@ class BookModelTests(TestCase):
             BookList.objects.filter(user=self.user, book=self.book).count()
         )
 
+    def test_number_of_listings(self):
+        '''Test if the number_of_listing property is calculated properly
+
+        Add self.book to 1 list, book2 to zero lists, book3 to 2 list
+        '''
+
+        book2 = Book.objects.get(pk=2)
+        book3 = Book.objects.get(pk=3)
+        user2 = User.objects.get(pk=3)
+        self.book.add_to_booklist(self.user)
+        book3.add_to_booklist(self.user)
+        book3.add_to_booklist(user2)
+        self.assertEqual(1, self.book.number_of_listings)
+        self.assertEqual(0, book2.number_of_listings)
+        self.assertEqual(2, book3.number_of_listings)
+
 
 class BookListModelTests(TestCase):
 
