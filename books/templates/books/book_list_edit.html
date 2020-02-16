@@ -14,8 +14,18 @@
     {% form form=form %}{% endform %}
 
     <button type="submit" name="_submit" class="btn">
+        <i class="material-icons left">edit</i>
         Update book
     </button>
 </form>
+
+<div id="book-remove">
+    <p>You don't want to keep this book on your list?</p>
+    <a class="waves-effect waves-light btn red darken-4" href="{% url 'books:book_list_delete' form.instance.pk %}">
+        <i class="material-icons left">remove</i>
+        Remove book from your list
+    </a>
+</div>
+
 
 {% endblock %}

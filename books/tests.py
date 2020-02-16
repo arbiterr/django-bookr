@@ -318,6 +318,40 @@ class BookListEditViewTest(TestCase):
             response, template_name='books/book_list_edit.html')
 
 
+class BookListDeleteViewTest(TestCase):
+
+    fixtures = ['fewusers.json', 'booklist_without_ratings']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=2)
+
+    def test_url_logged_out(self):
+        response = self.client.get('/my/books/delete/1/')
+        self.assertRedirects(
+            response,
+            f"{reverse('login')}?next=/my/books/delete/1/")
+
+    def test_url_logged_in(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/my/books/delete/1/')
+        self.assertRedirects(
+            response,
+            reverse('books:book_list'))
+
+    def test_url_logged_in_invalid_id(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/my/books/delete/5/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_success(self):
+        self.client.force_login(self.user)
+        self.client.get(
+            reverse('books:book_list_delete', kwargs={'pk': 1})
+        )
+        with self.assertRaises(BookList.DoesNotExist):
+            BookList.objects.get(pk=1)
+
+
 class BookSearchViewTests(TestCase):
 
     fixtures = ['fewusers.json', 'threebooks.json']

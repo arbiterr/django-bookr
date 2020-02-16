@@ -33,3 +33,7 @@ img.book-cover{
     font-size: 180px;
     line-height: 270px;
 }
+
+#book-remove{
+    margin-top: 2em;
+}

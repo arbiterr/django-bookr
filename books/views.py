@@ -64,7 +64,9 @@ def dashboard(request):
 @login_required
 def book_list(request):
     ctx = {
-        "mybooks": BookList.objects.filter(user=request.user)
+        "mybooks": BookList.objects.filter(
+            user=request.user).order_by(
+                'book__author__last_name', 'book__title')
     }
     return render(request, 'books/book_list.html', ctx)
 
@@ -101,6 +103,13 @@ def book_list_edit(request, pk):
         form.save()
         return redirect('books:book_list')
     return render(request, 'books/book_list_edit.html', {'form': form})
+
+
+@login_required
+def book_list_delete(request, pk):
+    bl_item = get_object_or_404(BookList, pk=pk, user=request.user)
+    bl_item.delete()
+    return redirect('books:book_list')
 
 
 @login_required
