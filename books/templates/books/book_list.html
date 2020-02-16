@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load book_tags %}
 {% block title %}My books{% endblock %}
 {% block content %}
 <h2>My books</h2>
@@ -8,10 +9,16 @@
     Add a book to your list
 </a>
 
-{% for book_listed in mybooks %}
-<div>{{ book_listed.book }}</div>
-{% empty %}
-<p>No books on your list yet.</p>
-{% endfor %}
+{% with total=mybooks.count %}
+<h4>You have {{ total }} book{{ total|pluralize }} on your list:</h4>
+{% endwith %}
+
+<div class="row">
+    {% for book_listed in mybooks %}
+    {% booklist_card book_listed %}
+    {% empty %}
+    <p>No books on your list yet.</p>
+    {% endfor %}
+</div>
 
 {% endblock %}

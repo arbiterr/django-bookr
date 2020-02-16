@@ -1,6 +1,7 @@
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.forms import modelform_factory
+from django.shortcuts import render, redirect, get_object_or_404
 import requests
 
 from .forms import BookListAddForm, SearchResultsForm
@@ -75,6 +76,31 @@ def book_list_add(request):
         form.save()
         return redirect('books:book_list')
     return render(request, 'books/book_list_add.html', {'form': form})
+
+
+@login_required
+def book_list_edit(request, pk):
+    bl_item = get_object_or_404(BookList, pk=pk, user=request.user)
+    book = bl_item.book
+    HELP_TEXT_TRUNK = 'Originally: '
+    BookListEditForm = modelform_factory(
+        BookList,
+        fields=(
+            'override_author', 'override_title',
+            'override_year', 'override_cover'
+        ),
+        help_texts={
+            'override_author': HELP_TEXT_TRUNK+str(book.author),
+            'override_title': HELP_TEXT_TRUNK+book.title,
+            'override_year': HELP_TEXT_TRUNK+str(book.first_published),
+            'override_cover': HELP_TEXT_TRUNK+book.cover
+        }
+    )
+    form = BookListEditForm(request.POST or None, instance=bl_item)
+    if form.is_valid():
+        form.save()
+        return redirect('books:book_list')
+    return render(request, 'books/book_list_edit.html', {'form': form})
 
 
 @login_required

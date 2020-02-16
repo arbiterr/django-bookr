@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
+from django.template import Template, Context
 from django.test import TestCase
 from django.urls import reverse
 
@@ -286,6 +287,37 @@ class BookListAddViewTests(TestCase):
         self.assertRedirects(response, reverse('books:book_list'))
 
 
+class BookListEditViewTest(TestCase):
+
+    fixtures = ['fewusers.json', 'booklist_without_ratings']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=2)
+
+    def test_url_logged_out(self):
+        response = self.client.get('/my/books/edit/1/')
+        self.assertRedirects(
+            response,
+            f"{reverse('login')}?next=/my/books/edit/1/")
+
+    def test_url_logged_in(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/my/books/edit/1/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_logged_in_invalid_id(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/my/books/edit/5/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_template_used(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse('books:book_list_edit', kwargs={'pk': 1}))
+        self.assertTemplateUsed(
+            response, template_name='books/book_list_edit.html')
+
+
 class BookSearchViewTests(TestCase):
 
     fixtures = ['fewusers.json', 'threebooks.json']
@@ -340,3 +372,33 @@ class BookSearchViewTests(TestCase):
                 ("OL71", "Author 2: Title 2 (2012)")
             )
         )
+
+
+class TestBookCardTag(TestCase):
+
+    fixtures = ['fewusers.json', 'booklist_without_ratings']
+    TEMPLATE_NO_LIST = Template("{% load book_tags %} {% book_card book %}")
+    TEMPLATE_WITH_LIST = Template(
+        "{% load book_tags %} {% booklist_card booklist %}")
+
+    def test_rendering_without_booklist(self):
+        book = Book.objects.get(pk=1)
+        rendered = self.TEMPLATE_NO_LIST.render(Context({'book': book}))
+        self.assertIn(book.title, rendered)
+
+    def test_rendering_booklist_no_overrides(self):
+        booklist = BookList.objects.get(pk=1)
+        book = booklist.book
+        rendered = self.TEMPLATE_WITH_LIST.render(
+            Context({'booklist': booklist}))
+        self.assertIn(book.title, rendered)
+
+    def test_rendering_booklist_with_overriden_title(self):
+        booklist = BookList.objects.get(pk=1)
+        booklist.override_title = 'New title'
+        booklist.save()
+        book = booklist.book
+        rendered = self.TEMPLATE_WITH_LIST.render(
+            Context({'booklist': booklist}))
+        self.assertNotIn(book.title, rendered)
+        self.assertIn('New title', rendered)

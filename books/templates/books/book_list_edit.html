@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load material_form %}
+
+{% block title %}Update your book{% endblock %}
+
+
+{% block content %}
+<h2>Update your book</h2>
+
+<p>Please note, that you can update a book only for yourself. The same book in other user's list won't be affected.</p>
+
+<form method="post" action="">
+    {% csrf_token %}
+    {% form form=form %}{% endform %}
+
+    <button type="submit" name="_submit" class="btn">
+        Update book
+    </button>
+</form>
+
+{% endblock %}

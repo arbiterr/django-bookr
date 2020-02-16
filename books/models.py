@@ -62,6 +62,7 @@ class BookList(models.Model):
     override_author = models.CharField(max_length=50, blank=True)
     override_year = models.IntegerField(
         'override year of first publication', null=True, blank=True)
+    override_cover = models.URLField(max_length=100, blank=True)
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -73,3 +74,21 @@ class BookList(models.Model):
 
     def __str__(self):
         return f'{self.user.username} lists {self.book}'
+
+    def get_title(self):
+        return self.override_title if self.override_title else self.book.title
+
+    def get_author(self):
+        if self.override_author:
+            return self.override_author
+        else:
+            return self.book.author
+
+    def get_cover(self):
+        return self.override_cover if self.override_cover else self.book.cover
+
+    def get_year(self):
+        if self.override_year:
+            return self.override_year
+        else:
+            return self.book.first_published
