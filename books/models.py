@@ -34,14 +34,14 @@ class Book(models.Model):
     def __str__(self):
         return f'{self.author}: {self.title}'
 
-    def add_to_booklist(self, user):
-        return self.booklist_set.get_or_create(user=user)
-
     @property
     def number_of_listings(self):
         '''Calculates how many times was a book listed by users'''
         self._number_of_listings = self.booklist_set.count()
         return self._number_of_listings
+
+    def add_to_booklist(self, user):
+        return self.booklist_set.get_or_create(user=user)
 
 
 class BookList(models.Model):

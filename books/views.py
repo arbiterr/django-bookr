@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 import requests
@@ -5,29 +6,22 @@ import requests
 from .forms import BookListAddForm, SearchResultsForm
 from .models import Author, Book, BookList
 
-
-def dashboard(request):
-    ctx = {
-        "recent_books": Book.objects.order_by('-added')[:5]
-    }
-    return render(request, 'books/index.html', ctx)
+# Helper functions #
 
 
-@login_required
-def book_list(request):
-    ctx = {
-        "mybooks": BookList.objects.filter(user=request.user)
-    }
-    return render(request, 'books/book_list.html', ctx)
+def get_most_read_books():
+    '''Get books added on the most lists
+
+    If two or more books are on the same number of lists, the oldest book
+    gets higher rank'''
+    return Book.objects.annotate(
+        num_books=Count('booklist')).order_by('-num_books', 'added')[:5]
+    return []
 
 
-@login_required
-def book_list_add(request):
-    form = BookListAddForm(request.POST or None, user=request.user)
-    if form.is_valid():
-        form.save()
-        return redirect('books:book_list')
-    return render(request, 'books/book_list_add.html', {'form': form})
+def get_recent_books():
+    '''Get 5 most recently added books to the db'''
+    return Book.objects.order_by('-added')[:5]
 
 
 def create_book_choices(results):
@@ -54,6 +48,33 @@ def create_book_choices(results):
                "first_publish_year")) <= set(b)
     )
     return choices
+
+
+# Views #
+
+def dashboard(request):
+    ctx = {
+        "most_read_books": get_most_read_books(),
+        "recent_books": get_recent_books(),
+    }
+    return render(request, 'books/index.html', ctx)
+
+
+@login_required
+def book_list(request):
+    ctx = {
+        "mybooks": BookList.objects.filter(user=request.user)
+    }
+    return render(request, 'books/book_list.html', ctx)
+
+
+@login_required
+def book_list_add(request):
+    form = BookListAddForm(request.POST or None, user=request.user)
+    if form.is_valid():
+        form.save()
+        return redirect('books:book_list')
+    return render(request, 'books/book_list_add.html', {'form': form})
 
 
 @login_required

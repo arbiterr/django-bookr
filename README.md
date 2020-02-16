@@ -22,7 +22,7 @@ This project allows users to track and rate the books they've read.
 ### Dashboard
 
 * [ ] The dashboard displays the top 5 highest rated books
-* [ ] The dashboard displays the top 5 most read books
+* [x] The dashboard displays the top 5 most read books
 * [x] The dashboard displays the 5 books added most recently
 * [x] Both visitors and authenticated users can view the dashboard
 

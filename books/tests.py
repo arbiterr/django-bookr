@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from .forms import BookListAddForm
 from .models import Author, Book, BookList
-from .views import create_book_choices
+from .views import get_recent_books, get_most_read_books, create_book_choices
 
 
 class DashboardViewEmptyDBTests(TestCase):
@@ -34,19 +34,34 @@ class DashboardViewEmptyDBTests(TestCase):
         self.assertContains(response, 'No books added yet.')
 
 
-class DashboardViewSmallDBTests(TestCase):
+class DashboardViewHelperFunctionsTests(TestCase):
     '''Test dashboard with fixtures with a few data'''
 
-    fixtures = ['threebooks.json']
+    fixtures = ['fewusers.json', 'booklist_without_ratings']
+
+    def test_most_read_books(self):
+        books = get_most_read_books()
+        self.assertQuerysetEqual(
+            books,
+            [
+                repr(Book.objects.get(pk=1)),
+                repr(Book.objects.get(pk=6)),
+                repr(Book.objects.get(pk=10)),
+                repr(Book.objects.get(pk=12)),
+                repr(Book.objects.get(pk=2)),
+            ]
+        )
 
     def test_recently_added_books(self):
-        response = self.client.get(reverse('books:dashboard'))
+        books = get_recent_books()
         self.assertQuerysetEqual(
-            response.context['recent_books'],
+            books,
             [
-                repr(Book.objects.get(pk=3)),
-                repr(Book.objects.get(pk=2)),
-                repr(Book.objects.get(pk=1))
+                repr(Book.objects.get(pk=12)),
+                repr(Book.objects.get(pk=11)),
+                repr(Book.objects.get(pk=10)),
+                repr(Book.objects.get(pk=9)),
+                repr(Book.objects.get(pk=8)),
             ]
         )
 
