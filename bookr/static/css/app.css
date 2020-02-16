@@ -1,3 +1,35 @@
 body{
     background: #e5e3ea;
 }
+
+.card .card-content, .card .card-action{
+    padding: 6px 10px;
+}
+
+.card .card-action{
+    color: #ccc;
+}
+
+.book-author{
+    font-weight: bold;
+}
+
+.book-title{
+    font-size: 0.8em;
+}
+
+img.book-cover{
+    height: 270px;
+    width: 100%;
+}
+
+.card .card-image{
+    text-align: center;
+    overflow: hidden;
+}
+
+.card-image i.large{
+    height: 270px;
+    font-size: 180px;
+    line-height: 270px;
+}

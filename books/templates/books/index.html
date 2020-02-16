@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load book_tags %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <h2>Dashboard</h2>
@@ -11,16 +12,21 @@
 {% endfor %}
 
 <h3>Most read books</h3>
-{% for book in most_read_books %}
-<div>{{ book }}</div>
-{% empty %}
-<p>No books read yet.</p>
-{% endfor %}
+<div class="row">
+    {% for book in most_read_books %}
+    {% book_card book %}
+    {% empty %}
+    <p>No books read yet.</p>
+    {% endfor %}
+</div>
+
 
 <h3>Recently added books</h3>
-{% for book in recent_books %}
-<div>{{ book }}</div>
-{% empty %}
-<p>No books added yet.</p>
-{% endfor %}
+<div class="row">
+    {% for book in recent_books %}
+    {% book_card book %}
+    {% empty %}
+    <p>No books added yet.</p>
+    {% endfor %}
+</div>
 {% endblock %}
