@@ -40,8 +40,15 @@ class Book(models.Model):
         self._number_of_listings = self.booklist_set.count()
         return self._number_of_listings
 
-    def add_to_booklist(self, user):
-        return self.booklist_set.get_or_create(user=user)
+    @property
+    def average_rating(self):
+        '''Calculates average rating'''
+        self._average_rating = self.booklist_set.aggregate(
+            models.Avg('rating'))['rating__avg']
+        return self._average_rating
+
+    def add_to_booklist(self, user, rating=None):
+        return self.booklist_set.get_or_create(user=user, rating=rating)
 
 
 class BookList(models.Model):

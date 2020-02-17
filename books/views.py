@@ -109,6 +109,8 @@ def book_list_edit(request, pk):
 
 @login_required
 def book_list_delete(request, pk):
+    '''Remove a book from user's booklist'''
+    # TODO: refactor this to work with DELETE or POST method
     bl_item = get_object_or_404(BookList, pk=pk, user=request.user)
     bl_item.delete()
     return redirect('books:book_list')

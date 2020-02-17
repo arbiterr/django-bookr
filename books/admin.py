@@ -6,7 +6,8 @@ from .models import Author, Book, BookList
 class BookAdmin(admin.ModelAdmin):
     model = Book
     list_display = (
-        'author', 'title', 'first_published', 'number_of_listings', 'added')
+        'author', 'title', 'first_published', 'number_of_listings',
+        'average_rating', 'added')
     list_filter = ['author']
     search_fields = ['title']
 

@@ -144,6 +144,27 @@ class BookModelTests(TestCase):
         self.assertEqual(0, book2.number_of_listings)
         self.assertEqual(2, book3.number_of_listings)
 
+    def test_average_rating(self):
+        '''Test if the average_rating property is calculated properly
+
+        self.book is rated for 5 and 5 - rating should be 5
+        book2 is rated for 4 - rating should be 4
+        book3 is rated for 4 and 5 - rating should be 4.5
+
+        '''
+
+        book2 = Book.objects.get(pk=2)
+        book3 = Book.objects.get(pk=3)
+        user2 = User.objects.get(pk=3)
+        self.book.add_to_booklist(self.user, 5)
+        self.book.add_to_booklist(user2, 5)
+        book2.add_to_booklist(user2, 4)
+        book3.add_to_booklist(self.user, 4)
+        book3.add_to_booklist(user2, 5)
+        self.assertEqual(5, self.book.average_rating)
+        self.assertEqual(4, book2.average_rating)
+        self.assertEqual(4.5, book3.average_rating)
+
 
 class BookListModelTests(TestCase):
 
