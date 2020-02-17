@@ -408,7 +408,7 @@ class BookSearchViewTests(TestCase):
         )
 
 
-class TestBookCardTag(TestCase):
+class BookCardTagTest(TestCase):
 
     fixtures = ['fewusers.json', 'booklist_without_ratings']
     TEMPLATE_NO_LIST = Template("{% load book_tags %} {% book_card book %}")
@@ -436,3 +436,54 @@ class TestBookCardTag(TestCase):
             Context({'booklist': booklist}))
         self.assertNotIn(book.title, rendered)
         self.assertIn('New title', rendered)
+
+
+class BookRateViewTest(TestCase):
+
+    fixtures = ['fewusers.json', 'booklist_without_ratings']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=2)
+
+    def test_get_request(self):
+        '''test if GET requests are not allowed'''
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('books:book_rate'))
+        self.assertEqual(response.status_code, 405)
+
+    def test_post_request_no_data(self):
+        self.client.force_login(self.user)
+        response = self.client.post(reverse('books:book_rate'))
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_request_invalid_parameter(self):
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse('books:book_rate'), {'blalba': 45, 'rating': 3}
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_request_invalid_rating(self):
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse('books:book_rate'), {'booklist_id': 1, 'rating': 7}
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_request_invalid_booklist_id(self):
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse('books:book_rate'), {'booklist_id': 12, 'rating': 3}
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_request_valid_data(self):
+        booklist = BookList.objects.get(pk=1)
+        self.assertEqual(booklist.rating, None)
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse('books:book_rate'), {'booklist_id': 1, 'rating': 5}
+        )
+        self.assertEqual(response.status_code, 200)
+        booklist = BookList.objects.get(pk=1)
+        self.assertEqual(booklist.rating, 5)

@@ -16,4 +16,5 @@ urlpatterns = [
         name='book_list_delete'
     ),
     path('my/books/search/', views.book_search, name='book_search'),
+    path('my/books/rate/', views.book_rate, name='book_rate'),
 ]

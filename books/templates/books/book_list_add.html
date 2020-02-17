@@ -13,7 +13,7 @@
     {% csrf_token %}
     {% form form=form %}{% endform %}
 
-    <button type="submit" name="_submit" class="btn">
+    <button type="submit" name="_submit" class="waves-effect waves-light btn orange accent-2">
         <i class="material-icons left">library_add</i>
         Add book
     </button>
@@ -22,7 +22,7 @@
 <h4>Or search on OpenLibrary for a new book:</h4>
 
 <input type="text" name="q" id="bookSearchInput">
-<a id="bookSearchLink" class="waves-effect waves-light btn" href="{% url 'books:book_search' %}">
+<a id="bookSearchLink" class="waves-effect waves-light btn orange accent-2" href="{% url 'books:book_search' %}">
     <i class="material-icons left">search</i>
     Search
 </a>

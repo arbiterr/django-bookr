@@ -34,6 +34,34 @@ img.book-cover{
     line-height: 270px;
 }
 
+.card-action .book-edit{
+    float: right;
+}
+
+#booklist .card .card-action .book-edit a{
+    margin: 0;
+}
+
 #book-remove{
     margin-top: 2em;
+}
+
+ul.rater{
+    margin-right: 1em;
+}
+
+ul.rater, ul.rater>li{
+    display: inline;
+}
+
+ul.rater>li.selected{
+    color: #ffab40;
+}
+
+ul.rater>li{
+    cursor: pointer;
+}
+
+ul.rater>li.hover{
+    color: #ffd8a6;
 }

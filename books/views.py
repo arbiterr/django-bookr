@@ -1,7 +1,9 @@
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.forms import modelform_factory
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
 import requests
 
 from .forms import BookListAddForm, SearchResultsForm
@@ -161,3 +163,20 @@ def book_search(request):
                 book.save()
             book.add_to_booklist(request.user)
         return redirect('books:book_list')
+
+
+@require_POST
+@login_required
+def book_rate(request):
+    booklist_id = int(request.POST.get('booklist_id', 0))
+    new_rating = int(request.POST.get('rating', 0))
+    if booklist_id and new_rating in range(1, 6):
+        bl_item = get_object_or_404(
+            BookList, pk=booklist_id, user=request.user)
+        bl_item.rating = new_rating
+        bl_item.save()
+        return JsonResponse({
+            'booklist_id': bl_item.id, 'rating': bl_item.rating
+        })
+    else:
+        return JsonResponse({}, status=404)
