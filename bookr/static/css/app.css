@@ -34,7 +34,7 @@ img.book-cover{
     line-height: 270px;
 }
 
-.card-action .book-edit{
+.card-action .book-edit, .card-action .book-listings{
     float: right;
 }
 

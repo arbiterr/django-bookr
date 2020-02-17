@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Avg, Count
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.forms import modelform_factory
@@ -17,14 +17,27 @@ def get_most_read_books():
 
     If two or more books are on the same number of lists, the oldest book
     gets higher rank'''
+
     return Book.objects.annotate(
-        num_books=Count('booklist')).order_by('-num_books', 'added')[:5]
-    return []
+        num_lists=Count('booklist')).order_by('-num_lists', 'added')[:5]
 
 
 def get_recent_books():
     '''Get 5 most recently added books to the db'''
     return Book.objects.order_by('-added')[:5]
+
+
+def get_top_rated_books():
+    '''Get the top 5 books with highest average rating
+
+    If two or more books has the same average rating, then the next criteria is
+    number of listings, then time added (oldest higher rank)
+    '''
+
+    return Book.objects.annotate(
+        num_lists=Count('booklist'),
+        avg_rating=Avg('booklist__rating')
+    ).order_by('-avg_rating', '-num_lists', 'added')[:5]
 
 
 def create_book_choices(results):
@@ -59,6 +72,7 @@ def dashboard(request):
     ctx = {
         "most_read_books": get_most_read_books(),
         "recent_books": get_recent_books(),
+        "top_books": get_top_rated_books()
     }
     return render(request, 'books/index.html', ctx)
 

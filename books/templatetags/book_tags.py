@@ -7,7 +7,8 @@ register = template.Library()
 def book_card(book):
     return {
         'cover': book.cover, 'author': book.author, 'title': book.title,
-        'number_of_listings': book.number_of_listings
+        'number_of_listings': book.number_of_listings,
+        'avg_rating': book.average_rating
         }
 
 
