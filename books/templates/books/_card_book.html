@@ -1,7 +1,13 @@
 {% extends 'books/_card_base.html' %}
 
 {% block footer %}
-<span class="book-listings">
+<span class="book-avgrating" title="{% if avg_rating %}This book has an average rating of {{ avg_rating }}{% else %}Not rated yet.{% endif %}">
+    <i class="material-icons tiny">star</i>
+    {% if avg_rating %}
+    {{ avg_rating|floatformat:2 }}
+    {% endif %}
+</span>
+<span class="book-listings" title="This book is on {{ number_of_listings }} list{{ number_of_listings|pluralize }}">
     <i class="material-icons tiny">library_add</i>
     {{ number_of_listings }}
 </span>

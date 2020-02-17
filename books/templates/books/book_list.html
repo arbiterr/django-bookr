@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 {% load book_tags %}
 {% block title %}My books{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/starrr@2.0.4/dist/starrr.min.css">
+{% endblock %}
 {% block content %}
 <h2>My books</h2>
 
-<a class="waves-effect waves-light btn-large" href="{% url 'books:book_list_add' %}">
+<a class="waves-effect waves-light btn-large orange accent-2" href="{% url 'books:book_list_add' %}">
     <i class="material-icons left">library_add</i>
     Add a book to your list
 </a>
@@ -13,12 +16,53 @@
 <h4>You have {{ total }} book{{ total|pluralize }} on your list:</h4>
 {% endwith %}
 
-<div class="row">
+<div class="row" id="booklist">
     {% for book_listed in mybooks %}
     {% booklist_card book_listed %}
     {% empty %}
     <p>No books on your list yet.</p>
     {% endfor %}
 </div>
+{% csrf_token %}
+{% endblock %}
 
+
+{% block extra_js_inline %}
+$('.rater li').on('mouseover', function(){
+    var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
+
+    // Now highlight all the stars that's not after the current hovered star
+    $(this).parent().children('li').each(function(e){
+      if (e < onStar) {
+        $(this).addClass('hover');
+      }
+      else {
+        $(this).removeClass('hover');
+      }
+    });
+
+  }).on('mouseout', function(){
+    $(this).parent().children('li').each(function(e){
+      $(this).removeClass('hover');
+    });
+  }).on('click', function(){
+    let newRating = parseInt($(this).data('value'), 10);
+    let booklistId = parseInt($(this).parent().data('booklist-id'), 10);
+    let sendData = {
+        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+        rating: newRating,
+        booklist_id: booklistId
+    }
+    $.post("/my/books/rate/", sendData,
+        function(data) {
+            $('ul.rater[data-booklist-id="' + data.booklist_id + '"] li').each(function(e){
+                if (e < data.rating) {
+                    $(this).addClass('selected');
+                }
+                else {
+                    $(this).removeClass('selected');
+                }
+            });
+        });
+  });
 {% endblock %}

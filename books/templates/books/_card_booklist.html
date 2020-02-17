@@ -1,8 +1,29 @@
 {% extends 'books/_card_base.html' %}
 
 {% block footer %}
+
+<span>
+<ul class="rater" data-booklist-id="{{ booklist_id }}">
+    <li data-value='1' {% if rating > 0 %}class="selected"{% endif %}>
+        <i class="material-icons tiny">star</i>
+    </li>
+    <li data-value='2' {% if rating > 1 %}class="selected"{% endif %}>
+        <i class="material-icons tiny">star</i>
+    </li>
+    <li data-value='3' {% if rating > 2 %}class="selected"{% endif %}>
+        <i class="material-icons tiny">star</i>
+    </li>
+    <li data-value='4' {% if rating > 3 %}class="selected"{% endif %}>
+        <i class="material-icons tiny">star</i>
+    </li>
+    <li data-value='5' {% if rating > 4 %}class="selected"{% endif %}>
+        <i class="material-icons tiny">star</i>
+    </li>
+</ul>
+</span>
+
 <span class="book-edit">
-    <a href="{% url 'books:book_list_edit' booklist_id %}">
+    <a href="{% url 'books:book_list_edit' booklist_id %}" title="Update your book">
         <i class="material-icons tiny">edit</i>
     </a>
 </span>

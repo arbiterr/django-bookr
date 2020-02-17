@@ -5,11 +5,13 @@
 <h2>Dashboard</h2>
 
 <h3>Highest rated books</h3>
-{% for book in top_books %}
-<div>{{ book }}</div>
-{% empty %}
-<p>No books rated yet.</p>
-{% endfor %}
+<div class="row">
+    {% for book in top_books %}
+    {% book_card book %}
+    {% empty %}
+    <p>No books rated yet.</p>
+    {% endfor %}
+</div>
 
 <h3>Most read books</h3>
 <div class="row">
