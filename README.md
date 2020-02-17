@@ -45,4 +45,4 @@ pip install -r requirements.txt
 python manage.py migrate  --settings=bookr.settings.local
 python manage.py runserver --settings=bookr.settings.local
 ```
-5. Optionally create a superuser or load any of the fixtures in `bookr/fixtures/`
+5. Optionally create a superuser or load any of the fixtures in `books/fixtures/`
