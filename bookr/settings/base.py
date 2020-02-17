@@ -104,8 +104,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Log in/out redirects
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'books:dashboard'
+LOGOUT_REDIRECT_URL = 'books:dashboard'
 
 # Email settings
 

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load material_form %}
+
+{% block title %}Book search{% endblock %}
+
+
+{% block content %}
+<h2>Book search</h2>
+
+{% if form %}
+<p>We have found these books on OpenLibrary:</p>
+<form method="post" action="">
+    {% csrf_token %}
+    {% form form=form %}{% endform %}
+
+    <button type="submit" name="_submit" class="btn">
+        <i class="material-icons left">library_add</i>
+        Add book
+    </button>
+</form>
+{% else %}
+<p>We couldn't find the book you're looking for.</p>
+{% endif %}
+
+{% endblock %}

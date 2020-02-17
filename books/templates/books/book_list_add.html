@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load material_form %}
+
+{% block title %}My books{% endblock %}
+
+
+{% block content %}
+<h2>Add a new book to your list</h2>
+
+<h4>Select a book from our database:</h4>
+
+<form method="post" action="">
+    {% csrf_token %}
+    {% form form=form %}{% endform %}
+
+    <button type="submit" name="_submit" class="btn">
+        <i class="material-icons left">library_add</i>
+        Add book
+    </button>
+</form>
+
+<h4>Or search on OpenLibrary for a new book:</h4>
+
+<input type="text" name="q" id="bookSearchInput">
+<a id="bookSearchLink" class="waves-effect waves-light btn" href="{% url 'books:book_search' %}">
+    <i class="material-icons left">search</i>
+    Search
+</a>
+
+{% endblock %}
+
+{% block extra_js_inline %}
+$( "#bookSearchLink" ).click(function( event ) {
+    event.preventDefault();
+    window.location = this.href + '?q=' + encodeURIComponent($('#bookSearchInput').val());
+  });
+{% endblock %}

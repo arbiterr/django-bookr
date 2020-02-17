@@ -1,0 +1,9 @@
+{% extends 'books/_card_base.html' %}
+
+{% block footer %}
+<span class="book-edit">
+    <a href="{% url 'books:book_list_edit' booklist_id %}">
+        <i class="material-icons tiny">edit</i>
+    </a>
+</span>
+{% endblock %}

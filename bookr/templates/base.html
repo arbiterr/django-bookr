@@ -12,14 +12,14 @@
 
     <nav class="deep-purple">
         <div class="nav-wrapper container">
-            <a href="#" class="brand-logo">
+            <a href="{% url 'books:dashboard' %}" class="brand-logo">
                 <i class="material-icons">library_books</i>
                 <strong>Bookr</strong>
             </a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 {% if user.is_authenticated %}
                 <li>Welcome back, {{ user.username }}!</li>
-                <li><a href="#">My Books</a></li>
+                <li><a href="{% url 'books:book_list' %}">My Books</a></li>
                 <li>
                     <a class="dropdown-trigger" href="#!" data-target="settings-dropdown"><i class="material-icons">settings</i></a>
                     {# setting dropdown #}
@@ -49,6 +49,7 @@
     <script>
         $( document ).ready(function() {
             $(".dropdown-trigger").dropdown();
+            {% block extra_js_inline %}{% endblock %}
         });
 
     </script>
