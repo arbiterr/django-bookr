@@ -10,12 +10,13 @@ body{
     color: #ccc;
 }
 
-.book-author{
-    font-weight: bold;
+
+.book-author, .book-title{
+    font-size: 0.8em;
 }
 
 .book-title{
-    font-size: 0.8em;
+    font-weight: bold;
 }
 
 img.book-cover{
