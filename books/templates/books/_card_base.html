@@ -8,8 +8,8 @@
             {% endif %}
         </div>
         <div class="card-content">
-            <div class="book-author">{{ author|truncatechars:30 }}</div>
             <div class="book-title">{{ title|truncatechars:30 }}</div>
+            <div class="book-author">{{ author|truncatechars:30 }}</div>
         </div>
         <div class="card-action">
             {% block footer %}{% endblock %}
